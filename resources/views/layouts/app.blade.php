@@ -34,7 +34,7 @@
 
             <!-- Page Content -->
             <main>
-                {{ $slot }}
+<h2> Hello  </h2>
             </main>
         </div>
 
