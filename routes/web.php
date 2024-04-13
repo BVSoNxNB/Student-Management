@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClassController;
 use App\Http\Controllers\StudentController;
-;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -21,13 +21,6 @@ Route::middleware(['App\Http\Middleware\Authenticate'])->group(function () {
 
 
     });
-     Route::get('/classes', [ClassController::class, 'index']);
-        Route::get('/classes/create', [ClassController::class, 'create'])->name('classes.create');
-        Route::post('/classes', [ClassController::class, 'store'])->name('classes.store');
-        Route::get('/classes/{class}/edit', [ClassController::class, 'edit'])->name('classes.edit');
-        Route::put('/classes/{class}', [ClassController::class, 'update'])->name('classes.update');
-        Route::delete('/classes/{class}', [ClassController::class, 'destroy'])->name('classes.destroy');
-
     Route::middleware(['App\Http\Middleware\CheckAdmin'])->group(function () {
         Route::get('/admin', function () {
             // Chỉ các admin mới có thể truy cập route này
@@ -40,8 +33,18 @@ Route::middleware(['App\Http\Middleware\Authenticate'])->group(function () {
     Route::post('student/add/save', 'studentSave')->name('student/add/save'); // save record student
     Route::get('student/edit/{id}', 'studentEdit'); // view for edit
     Route::post('student/update', 'studentUpdate')->name('student/update'); // update record student
-    Route::delete('/student/delete', [StudentController::class, 'studentDelete'])->name('student.delete');
+    Route::post('/student/delete', 'delete')->name('student.delete');
     Route::get('student/profile/{id}', 'studentProfile')->middleware('auth'); // profile student
+    Route::resource('/student','StudentController');
+});
+Route::controller(ClassController::class)->group(function () {
+    Route::get('classes/list', 'classes')->middleware('auth')->name('classes/list'); // list student
+    Route::get('classes/add/page', 'classesAdd')->middleware('auth')->name('classes/add/page'); // page student
+    Route::post('classes/add/save', 'classesSave')->name('classes/add/save'); // save record student
+    Route::get('classes/edit/{id}', 'classesEdit'); // view for edit
+    Route::post('classes/update', 'classesUpdate')->name('classes/update'); // update record student
+    Route::post('/classes/delete', 'delete')->name('classes.delete');
+    Route::resource('/classes','ClassController');
+});
 });
 
-});

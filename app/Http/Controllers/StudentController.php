@@ -41,7 +41,7 @@ class StudentController extends Controller
             'blood_group'   => 'required|string',
             'religion'      => 'required|string',
             'email'         => 'required|email',
-            'class'         => 'required|string',
+            'student'         => 'required|string',
             'section'       => 'required|string',
             'admission_id'  => 'required|string',
             'phone_number'  => 'required',
@@ -63,7 +63,7 @@ class StudentController extends Controller
                 $student->blood_group  = $request->blood_group;
                 $student->religion     = $request->religion;
                 $student->email        = $request->email;
-                $student->class        = $request->class;
+                $student->student        = $request->student;
                 $student->section      = $request->section;
                 $student->admission_id = $request->admission_id;
                 $student->phone_number = $request->phone_number;
@@ -122,45 +122,28 @@ class StudentController extends Controller
 
     /** student delete */
     /** student delete */
-    public function deleteStudent($id)
+    public function delete(Request $request)
     {
-        DB::beginTransaction();
-        try {
-            // Tìm sinh viên theo ID
-            $student = Student::find($id);
+        $id = $request->input('id');
 
-            // Nếu sinh viên không tồn tại, trả về thông báo lỗi
-            if (!$student) {
-                Toastr::error('Student not found :(', 'Error');
-                return;
-            }
-
-            // Xóa hình ảnh sinh viên nếu có
-            if (!empty($student->upload)) {
-                unlink(storage_path('app/public/student-photos/' . $student->upload));
-            }
-
-            // Xóa sinh viên từ cơ sở dữ liệu
-            $student->delete();
-
-            // Commit transaction và hiển thị thông báo thành công
-            DB::commit();
-            Toastr::success('Student deleted successfully :)', 'Success');
-
-            // Gửi sự kiện để làm mới trang
-            $this->emit('refreshPage');
-
-        } catch (\Exception $e) {
-            // Nếu xảy ra lỗi, rollback transaction và hiển thị thông báo lỗi
-            DB::rollback();
-            Toastr::error('Failed to delete student :(', 'Error');
-        }
+    $student = Student::find($id);
+    if (!$student) {
+        Toastr::error('student not found.', 'Error');
+        return redirect()->route('student/list');
     }
 
-    public function deleteStudentConfirmed($id)
-    {
-        $this->deleteStudent($id);
+    try {
+        $student->delete();
+
+        Toastr::success('student has been deleted successfully.', 'Success');
+        return redirect()->route('student/list');
+    } catch (\Exception $e) {
+        Toastr::error('An error occurred while deleting the student.', 'Error');
+        return redirect()->route('student/list');
     }
+    }
+
+
 
 
     /** student profile page */

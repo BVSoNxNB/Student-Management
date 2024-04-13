@@ -100,9 +100,18 @@
       <button onclick="location.href='{{ url('student/edit/' . $list->id) }}'" class="btn btn-sm bg-danger-light">
         <i class="feather-edit"></i> Edit
       </button>
-      <button wire:click="deleteStudentRequest({{ $list->id }})" class="btn btn-sm bg-danger-light">
-        <i class="feather-trash-2"></i> Delete
-      </button>
+
+      <td>
+
+      <form id="deleteForm" action="{{ route('student.delete') }}" method="POST">
+    @csrf
+    <input type="hidden" name="id" value="{{ $list->id }}">
+    <button type="submit">Delete</button>
+</form>
+
+
+    </td>
+
     </div>
                                             </td>
                                         </tr>
@@ -116,16 +125,17 @@
             </div>
         </div>
     </div>
+    @section('script')
+
+    {{-- delete js --}}
+    <script>
+        $(document).on('click','.student_delete',function()
+        {
+            var _this = $(this).parents('tr');
+            $('.e_id').val(_this.find('.id').text());
+            $('.e_avatar').val(_this.find('.avatar').text());
+        });
+    </script>
+    @endsection
+
 @endsection
-<script>
-    Livewire.on('deleteStudentRequest', (id) => {
-    if (confirm('Are you sure you want to delete this student?')) {
-        Livewire.emit('deleteStudentConfirmed', id);
-    }
-    });
-    Livewire.on('refreshPage', () => {
-        location.reload();
-    });
-</script>
-
-
